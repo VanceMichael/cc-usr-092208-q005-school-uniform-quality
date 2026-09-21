@@ -8,7 +8,10 @@
     "sample_id",
     "actors",
     "facts",
-    "constraints"
+    "evidence_chain",
+    "operations",
+    "constraints",
+    "access_rules"
   ],
   "properties": {
     "domain": {
@@ -37,9 +40,30 @@
         "type": "string"
       }
     },
+    "evidence_chain": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string"
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
     "constraints": {
       "type": "array",
       "minItems": 2,
+      "items": {
+        "type": "string"
+      }
+    },
+    "access_rules": {
+      "type": "array",
+      "minItems": 1,
       "items": {
         "type": "string"
       }
