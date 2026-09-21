@@ -1,7 +1,7 @@
 {
   "domain": "school-uniform-quality",
-  "version": 1,
-  "sample_id": "record-005",
+  "version": 2,
+  "sample_id": "record-006",
   "actors": [
     "校服生产企业",
     "教育采购联合体",
@@ -11,12 +11,265 @@
   "facts": [
     "执法案例涉及不合格学生服装套装",
     "涉案上衣和裤子依据中小学生校服国家标准判定",
-    "企业已出厂销售二百套涉案服装"
+    "企业已出厂销售二百套涉案服装",
+    "同一套服装的上衣与裤子可能来自不同生产班次",
+    "只按整套数量验收会掩盖单个部件不符合标准的问题"
   ],
   "constraints": [
     "服装部件批次",
     "抽样封签",
     "到校分发",
-    "索赔结算"
+    "索赔结算",
+    "部件来源与数量平衡",
+    "按角色限定资料可见范围"
+  ],
+  "components": [
+    "上衣",
+    "裤子"
+  ],
+  "chain_stages": [
+    "供应合同",
+    "款号",
+    "面辅料",
+    "生产批次",
+    "抽样封签",
+    "检验项目",
+    "到校验收",
+    "分发去向",
+    "退换处理"
+  ],
+  "standards": [
+    {
+      "code": "GB/T 31888",
+      "version": "2015",
+      "title": "中小学生校服"
+    },
+    {
+      "code": "GB 18401",
+      "version": "2010",
+      "title": "国家纺织产品基本安全技术规范"
+    }
+  ],
+  "access_rules": [
+    {
+      "actor": "校服生产企业",
+      "scope": "本企业交付资料",
+      "permissions": [
+        "登记生产批次与面辅料",
+        "维护本企业交付与补货记录"
+      ]
+    },
+    {
+      "actor": "学校验收人员",
+      "scope": "本校验收与学生处置",
+      "permissions": [
+        "登记到校验收与分发去向",
+        "查看本校学生所需退换处置"
+      ]
+    },
+    {
+      "actor": "教育采购联合体",
+      "scope": "联合体采购项目",
+      "permissions": [
+        "冻结受影响部件",
+        "追踪通知完成情况",
+        "从结算与索赔追溯标准版本与检验原件"
+      ]
+    },
+    {
+      "actor": "市场监管人员",
+      "scope": "监管执法案件",
+      "permissions": [
+        "冻结受影响部件",
+        "追踪通知完成情况",
+        "调取检验原件"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "EV-01",
+      "kind": "合同登记",
+      "note": "教育采购联合体与生产企业签订夏季运动套装供应合同，共二百套",
+      "refs": {
+        "contract": "HT-2026-014",
+        "style_no": "XY-2026-08"
+      }
+    },
+    {
+      "id": "EV-02",
+      "kind": "批次登记",
+      "note": "上衣由甲班生产，登记面料FAB-01与辅料ACC-01",
+      "refs": {
+        "batch": "TOP-B01",
+        "style_no": "XY-2026-08",
+        "materials": ["FAB-01", "ACC-01"]
+      },
+      "moves": [
+        {"component": "上衣", "from": "生产车间", "to": "厂家仓库", "quantity": 200}
+      ]
+    },
+    {
+      "id": "EV-03",
+      "kind": "批次登记",
+      "note": "裤子由乙班生产，与上衣不同班次",
+      "refs": {
+        "batch": "PANTS-B02",
+        "style_no": "XY-2026-08",
+        "materials": ["FAB-01", "ACC-01"]
+      },
+      "moves": [
+        {"component": "裤子", "from": "生产车间", "to": "厂家仓库", "quantity": 200}
+      ]
+    },
+    {
+      "id": "EV-04",
+      "kind": "到校验收",
+      "note": "学校S101按整套验收一百二十套",
+      "refs": {"contract": "HT-2026-014"},
+      "moves": [
+        {"component": "上衣", "from": "厂家仓库", "to": "学校-S101", "quantity": 120},
+        {"component": "裤子", "from": "厂家仓库", "to": "学校-S101", "quantity": 120}
+      ]
+    },
+    {
+      "id": "EV-05",
+      "kind": "到校验收",
+      "note": "学校S102按整套验收八十套",
+      "refs": {"contract": "HT-2026-014"},
+      "moves": [
+        {"component": "上衣", "from": "厂家仓库", "to": "学校-S102", "quantity": 80},
+        {"component": "裤子", "from": "厂家仓库", "to": "学校-S102", "quantity": 80}
+      ]
+    },
+    {
+      "id": "EV-06",
+      "kind": "学校间调剂",
+      "note": "S102数量缺口，从S101调剂十套，部件批次关系随货转移",
+      "moves": [
+        {"component": "上衣", "from": "学校-S101", "to": "学校-S102", "quantity": 10},
+        {"component": "裤子", "from": "学校-S101", "to": "学校-S102", "quantity": 10}
+      ]
+    },
+    {
+      "id": "EV-07",
+      "kind": "分发",
+      "note": "S101向学生分发一百零八套，留存二套",
+      "moves": [
+        {"component": "上衣", "from": "学校-S101", "to": "学生-S101", "quantity": 108},
+        {"component": "裤子", "from": "学校-S101", "to": "学生-S101", "quantity": 108}
+      ]
+    },
+    {
+      "id": "EV-08",
+      "kind": "分发",
+      "note": "S102向学生分发八十八套",
+      "moves": [
+        {"component": "上衣", "from": "学校-S102", "to": "学生-S102", "quantity": 88},
+        {"component": "裤子", "from": "学校-S102", "to": "学生-S102", "quantity": 88}
+      ]
+    },
+    {
+      "id": "EV-09",
+      "kind": "拆套换码",
+      "note": "两名学生上衣换码，拆套仅换上衣，裤子不动，部件数量保持平衡",
+      "moves": [
+        {"component": "上衣", "from": "学生-S101", "to": "学校-S101", "quantity": 2, "size": "L"},
+        {"component": "上衣", "from": "学校-S101", "to": "学生-S101", "quantity": 2, "size": "M"}
+      ]
+    },
+    {
+      "id": "EV-10",
+      "kind": "补货",
+      "note": "厂家补货上衣二十件作为S101换码库存，登记新批次",
+      "refs": {
+        "batch": "TOP-B03",
+        "style_no": "XY-2026-08"
+      },
+      "moves": [
+        {"component": "上衣", "from": "生产车间", "to": "学校-S101", "quantity": 20}
+      ]
+    },
+    {
+      "id": "EV-11",
+      "kind": "学生退回",
+      "note": "S102一名学生退回一套，退回部件回到学校库存",
+      "moves": [
+        {"component": "上衣", "from": "学生-S102", "to": "学校-S102", "quantity": 1},
+        {"component": "裤子", "from": "学生-S102", "to": "学校-S102", "quantity": 1}
+      ]
+    },
+    {
+      "id": "EV-12",
+      "kind": "抽样封签",
+      "note": "监管人员分别对上衣与裤子抽样封签，封签号与批次绑定",
+      "refs": {
+        "seals": ["SEAL-T01", "SEAL-P01"]
+      }
+    },
+    {
+      "id": "EV-13",
+      "kind": "检验",
+      "note": "上衣样品依据中小学生校服国家标准检验合格",
+      "refs": {
+        "report": "LAB-T01",
+        "standard": "GB/T 31888-2015",
+        "seals": ["SEAL-T01"]
+      }
+    },
+    {
+      "id": "EV-14",
+      "kind": "检验",
+      "note": "裤子样品pH值不符合GB/T 31888-2015，判定不合格",
+      "refs": {
+        "report": "LAB-P01",
+        "standard": "GB/T 31888-2015",
+        "seals": ["SEAL-P01"]
+      }
+    },
+    {
+      "id": "EV-15",
+      "kind": "实验室更正",
+      "note": "实验室更正LAB-P01报告编号笔误，检验数据与结论不变",
+      "refs": {
+        "report": "LAB-P01C",
+        "corrects": "LAB-P01"
+      }
+    },
+    {
+      "id": "EV-16",
+      "kind": "复检",
+      "note": "对裤子批次PANTS-B02复检，pH值仍不合格",
+      "refs": {
+        "report": "LAB-P02",
+        "batch": "PANTS-B02",
+        "standard": "GB/T 31888-2015"
+      }
+    },
+    {
+      "id": "EV-17",
+      "kind": "冻结",
+      "note": "监管与采购冻结裤子批次PANTS-B02全部二百条，含已分发到学生的部分",
+      "refs": {
+        "batch": "PANTS-B02"
+      }
+    },
+    {
+      "id": "EV-18",
+      "kind": "通知",
+      "note": "冻结通知送达生产企业与两所学校，三方确认完成",
+      "refs": {
+        "notify_targets": ["校服生产企业", "学校-S101", "学校-S102"]
+      }
+    },
+    {
+      "id": "EV-19",
+      "kind": "结算索赔",
+      "note": "从最终付款中扣减并索赔，依据采用的标准版本与检验原件",
+      "refs": {
+        "contract": "HT-2026-014"
+      },
+      "evidence": ["GB/T 31888-2015", "LAB-P01C", "LAB-P02"]
+    }
   ]
 }

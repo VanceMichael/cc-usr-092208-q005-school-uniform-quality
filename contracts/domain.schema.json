@@ -8,7 +8,12 @@
     "sample_id",
     "actors",
     "facts",
-    "constraints"
+    "constraints",
+    "components",
+    "chain_stages",
+    "standards",
+    "access_rules",
+    "events"
   ],
   "properties": {
     "domain": {
@@ -17,7 +22,7 @@
     },
     "version": {
       "type": "integer",
-      "minimum": 1
+      "minimum": 2
     },
     "sample_id": {
       "type": "string",
@@ -27,21 +32,224 @@
       "type": "array",
       "minItems": 2,
       "items": {
-        "type": "string"
+        "type": "string",
+        "minLength": 1
       }
     },
     "facts": {
       "type": "array",
       "minItems": 2,
       "items": {
-        "type": "string"
+        "type": "string",
+        "minLength": 1
       }
     },
     "constraints": {
       "type": "array",
       "minItems": 2,
       "items": {
-        "type": "string"
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "套装可拆分追踪的部件，如上衣、裤子"
+    },
+    "chain_stages": {
+      "type": "array",
+      "minItems": 9,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "证据链环节：供应合同、款号、面辅料、生产批次、抽样封签、检验项目、到校验收、分发去向、退换处理"
+    },
+    "standards": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["code", "version", "title"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "access_rules": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["actor", "scope", "permissions"],
+        "properties": {
+          "actor": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "permissions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "note"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "合同登记",
+              "批次登记",
+              "抽样封签",
+              "检验",
+              "到校验收",
+              "分发",
+              "拆套换码",
+              "补货",
+              "复检",
+              "实验室更正",
+              "学校间调剂",
+              "学生退回",
+              "冻结",
+              "通知",
+              "结算索赔"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1
+          },
+          "refs": {
+            "type": "object",
+            "properties": {
+              "contract": {
+                "type": "string",
+                "minLength": 1
+              },
+              "style_no": {
+                "type": "string",
+                "minLength": 1
+              },
+              "batch": {
+                "type": "string",
+                "minLength": 1
+              },
+              "report": {
+                "type": "string",
+                "minLength": 1
+              },
+              "corrects": {
+                "type": "string",
+                "minLength": 1
+              },
+              "standard": {
+                "type": "string",
+                "minLength": 1
+              },
+              "seals": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "materials": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "notify_targets": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "moves": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["component", "from", "to", "quantity"],
+              "properties": {
+                "component": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "from": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "to": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "size": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": false
       }
     }
   },
